@@ -7,9 +7,20 @@ defmodule Imunize.User do
 
   @primary_key {:id, :binary_id, autogenerate: true}
 
-  @required_params [:name, :cep, :cpf, :rg, :password, :birth_day, :birth_month, :birth_year]
+  @required_params [
+    :name,
+    :cep,
+    :email,
+    :cpf,
+    :rg,
+    :password,
+    :birth_day,
+    :birth_month,
+    :birth_year
+  ]
 
-  @derive {Jason.Encoder, only: [:name, :cep, :cpf, :rg, :birth_day, :birth_month, :birth_year]}
+  @derive {Jason.Encoder,
+           only: [:name, :email, :cep, :cpf, :rg, :birth_day, :birth_month, :birth_year]}
 
   schema "users" do
     field :name, :string
