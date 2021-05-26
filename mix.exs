@@ -33,6 +33,7 @@ defmodule Imunize.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      {:pbkdf2_elixir, "~> 1.4"},
       {:credo, "~> 1.5", only: [:dev, :test], runtime: false},
       {:phoenix, "~> 1.5.8"},
       {:phoenix_ecto, "~> 4.1"},
