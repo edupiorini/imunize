@@ -1,4 +1,8 @@
 defmodule Imunize.User do
+  @moduledoc """
+  Schema for user definition and changeset
+  """
+
   use Ecto.Schema
 
   import Ecto.Changeset
@@ -14,13 +18,10 @@ defmodule Imunize.User do
     :cpf,
     :rg,
     :password,
-    :birth_day,
-    :birth_month,
-    :birth_year
+    :birthday
   ]
 
-  @derive {Jason.Encoder,
-           only: [:name, :email, :cep, :cpf, :rg, :birth_day, :birth_month, :birth_year]}
+  @derive {Jason.Encoder, only: [:id, :name, :email, :cep, :cpf, :rg]}
 
   schema "users" do
     field :name, :string
@@ -28,11 +29,9 @@ defmodule Imunize.User do
     field :cpf, :string
     field :rg, :string
     field :email, :string
-    field :password, :string
+    field :password, :string, virtual: true
     field :password_hash, :string
-    field :birth_day, :integer
-    field :birth_month, :integer
-    field :birth_year, :integer
+    field :birthday, :naive_datetime
 
     timestamps()
   end
@@ -45,22 +44,32 @@ defmodule Imunize.User do
     |> validate_length(:cep, is: 8)
     |> validate_length(:cpf, is: 11)
     |> validate_length(:rg, is: 9)
-    |> validate_number(:birth_day, greater_than_or_equal_to: 1)
-    |> validate_number(:birth_month, greater_than_or_equal_to: 1)
-    |> validate_number(:birth_year, greater_than_or_equal_to: 1921)
-    |> validate_number(:birth_day, less_than_or_equal_to: 31)
-    |> validate_number(:birth_month, less_than_or_equal_to: 12)
-    # Necessário alterar para forma dinâmica
-    |> validate_number(:birth_year, less_than_or_equal_to: 2021)
     |> validate_format(:email, ~r/@/)
     |> unique_constraint([:email])
     |> unique_constraint([:cpf])
     |> put_password_hash()
   end
 
+  @spec put_password_hash(%Changeset{}) :: String.t()
   defp put_password_hash(%Changeset{valid?: true, changes: %{password: password}} = changeset) do
     change(changeset, Pbkdf2.add_hash(password))
   end
 
   defp put_password_hash(changeset), do: changeset
+
+  # def create_date(%Changeset{
+  #       valid?: true,
+  #       changes:
+  #         %{
+  #           birthday: _birthday,
+  #           birth_day: birth_day,
+  #           birth_yearh: birth_year,
+  #           birth_month: birth_month
+  #         } = changeset
+  #     }) do
+  #   new_date = Date.new!(birth_year, birth_month, birth_day)
+
+  #   changeset
+  #   |> Map.replace(:birthday, new_date)
+  # end
 end
