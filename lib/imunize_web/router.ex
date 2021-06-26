@@ -7,6 +7,8 @@ defmodule ImunizeWeb.Router do
 
   scope "/api", ImunizeWeb do
     pipe_through :api
+
+    post "/user/", UsersController, :create
   end
 
   # Enables LiveDashboard only for development
