@@ -13,20 +13,23 @@ defmodule Imunize.Users.Create do
 
   defp handle_call({:error, _reason}), do: {:error, "Some error"}
 
-  defp parse_datetime(%{birthday: birthday} = params) do
-    [year, month, day] = String.split(birthday, "-", trim: true)
-
+  def parse_datetime(%{"birthday" => birthday} = params) do
     naive_date =
-      NaiveDateTime.new!(
-        String.to_integer(year),
-        String.to_integer(month),
-        String.to_integer(day),
-        0,
-        0,
-        0
-      )
+      String.split(birthday, "-", trim: true)
+      |> create_naive_datetime()
 
     params
-    |> Map.update(:birthday, naive_date, fn _old_value -> naive_date end)
+    |> Map.update("birthday", naive_date, fn _old_value -> naive_date end)
+  end
+
+  defp create_naive_datetime([year, month, day]) do
+    NaiveDateTime.new!(
+      String.to_integer(year),
+      String.to_integer(month),
+      String.to_integer(day),
+      0,
+      0,
+      0
+    )
   end
 end
